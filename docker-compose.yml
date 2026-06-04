@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Layer 5: Web Dashboard Frontend (Flask + HTMX + SSE)
+  quant-dashboard:
+    build: ./dashboard
+    container_name: quant_dashboard_ui
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./knowledge_base/obsidian_vault:/workspace/vault
+      - ./agent_config:/root/.hermes-agent
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - python-middleware
+
+  # Layer 1 & 4: Python Middleware Execution Layer
+  python-middleware:
+    build: ./middleware
+    container_name: python_execution_middleware
+    ports:
+      - "8765:8765"   # WebSockets for MT5 execution and visual overlays
+      - "5555:5555"   # ZeroMQ low-latency socket for raw terminal ticks
+    volumes:
+      - ./knowledge_base/obsidian_vault:/workspace/vault
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - CHROMADB_HOST=chroma-db
+    restart: unless-stopped
+    depends_on:
+      - chroma-db
+
+  # Layer 2: Official Nous Research Hermes-Agent Workspace
+  hermes-agent:
+    image: python:3.11-slim
+    container_name: hermes_agent_core
+    tty: true
+    stdin_open: true
+    network_mode: "host" # Allows tool execution hooks to directly query local containers
+    volumes:
+      - ./knowledge_base/obsidian_vault:/workspace/vault
+      - ./agent_config:/root/.hermes-agent
+    environment:
+      - OLLAMA_BASE_URL=http://localhost:11434
+      - DEFAULT_MODEL=hf.co/NousResearch/Hermes-3-Llama-3.1-8B-GGUF:latest
+    command: /bin/bash
+    restart: unless-stopped
+
+  # Layer 3a: High-Density Vector Ingestion Store
+  chroma-db:
+    image: chromadb/chroma:latest
+    container_name: quant_chroma_vector
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_storage:/chroma/chroma
+    restart: unless-stopped
+
+volumes:
+  chroma_storage:

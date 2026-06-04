@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%; margin: 0;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hermes Quant CIO Dashboard</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <style>
+      body { margin: 0; min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; background: #020617; }
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-slate-300 font-sans">
+  <div class="h-full w-full max-w-[1024px] mx-auto p-5 flex flex-col gap-5 overflow-hidden select-none">
+    
+    <!-- Top Navigation Header -->
+    <header class="flex items-center justify-between bg-slate-900/50 border border-slate-800 p-4 rounded-2xl shrink-0">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">HQ</div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-white">HermesQuant<span class="text-indigo-400 font-medium">CIO</span></h1>
+          <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Algorithmic Architecture v3.1</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-3 bg-slate-950/50 px-3 py-1.5 rounded-full border border-slate-800">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+            <span class="text-xs font-mono">ZMQ:5555</span>
+          </div>
+          <div class="w-px h-3 bg-slate-800"></div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+            <span class="text-xs font-mono">MT5:8765</span>
+          </div>
+        </div>
+        <div id="killswitch-container" hx-target="#killswitch-container" hx-swap="outerHTML">
+           {% include 'fragments/killswitch_btn.html' %}
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Bento Grid -->
+    <main class="grid grid-cols-12 grid-rows-6 gap-5 flex-1 relative min-h-0">
+      
+      <!-- Real-time Telemetry (Layer 1) -->
+      <section class="col-span-8 row-span-4 bg-slate-900 border border-slate-800 rounded-3xl p-5 relative overflow-hidden flex flex-col">
+        <div class="flex justify-between items-center mb-6 shrink-0">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Market Telemetry Stream</h3>
+          <div class="flex gap-2 text-[10px] font-mono">
+            <span class="px-2 py-0.5 bg-slate-800 rounded text-emerald-400">XAUUSD</span>
+            <span class="px-2 py-0.5 bg-slate-800 rounded text-slate-400">M15</span>
+            <span class="px-2 py-0.5 bg-slate-800 rounded text-slate-400">H1</span>
+          </div>
+        </div>
+        
+        <div id="telemetry-data" hx-get="/api/telemetry" hx-trigger="load, every 2s" hx-swap="innerHTML" class="flex-1 flex flex-col justify-end">
+           <div class="text-emerald-400/50 font-mono text-sm animate-pulse m-auto">Loading pipelines...</div>
+        </div>
+      </section>
+
+      <!-- Risk Gatekeeper (Layer 4) -->
+      <section class="col-span-4 row-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-5">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="p-1.5 bg-rose-500/20 rounded-lg">
+            <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0h-2m8-3V5a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-3M14 10l-2 2m0 0l-2-2m2 2V4"></path></svg>
+          </div>
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Execution Firewall</h3>
+        </div>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center py-2 border-b border-slate-800">
+            <span class="text-xs">Max Risk Per Trade</span>
+            <span class="text-xs font-mono text-emerald-400 font-bold">1% (ACTIVE)</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-slate-800">
+            <span class="text-xs">Margin Threshold</span>
+            <span class="text-xs font-mono text-slate-300">$5,000.00</span>
+          </div>
+          <div class="flex justify-between items-center py-2">
+            <span class="text-xs">Model Override</span>
+            <span class="text-xs font-mono text-rose-500 font-bold underline">HARD-CODED</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Registered Skills (Layer 5) -->
+      <section class="col-span-4 row-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-5 flex flex-col">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Active Agent Skills</h3>
+        <div class="flex flex-col gap-2 overflow-y-auto pr-1 flex-1 scrollbar-hide">
+          <div class="flex items-center justify-between p-2 bg-slate-950 rounded-xl border border-slate-800">
+             <span class="flex items-center gap-2 text-xs text-slate-300"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> MT5 Protocol Handler</span>
+             <span class="text-[10px] text-slate-500 font-mono">[pyzmq]</span>
+          </div>
+          <div class="flex items-center justify-between p-2 bg-slate-950 rounded-xl border border-slate-800">
+             <span class="flex items-center gap-2 text-xs text-slate-300"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> SMC Vector DB Search</span>
+             <span class="text-[10px] text-slate-500 font-mono">[chromadb]</span>
+          </div>
+          <div class="flex items-center justify-between p-2 bg-slate-950 rounded-xl border border-slate-800">
+             <span class="flex items-center gap-2 text-xs text-slate-300"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Risk Gatekeeper Firewall</span>
+             <span class="text-[10px] text-slate-500 font-mono">[1% MAX REQ]</span>
+          </div>
+          <div class="flex items-center justify-between p-2 bg-slate-950 rounded-xl border border-slate-800">
+             <span class="flex items-center gap-2 text-xs text-slate-300"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Market Chart Annotator</span>
+             <span class="text-[10px] text-slate-500 font-mono">[ws 8765]</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Agent Command Loop (Layer 5) -->
+      <section class="col-span-7 row-span-2 bg-black border border-slate-800 rounded-3xl p-5 flex flex-col relative overflow-hidden">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Hermes-Agent Command Loop</h3>
+          <span class="text-[10px] text-indigo-400 font-mono">Hermes-3-8B | Qwen-Coder</span>
+        </div>
+        <div class="flex-1 font-mono text-[11px] text-emerald-500/80 space-y-1 mb-3 overflow-y-auto scrollbar-hide" id="terminal-output">
+          <p>> Hermes OS booting...</p>
+          <p>> Active Model: <span class="text-emerald-400">Hermes-3-8B</span> (Macro Reasoning)</p>
+          <p>> Sub-Model: <span class="text-emerald-400">qwen-coder</span> (Code Generation)</p>
+          <p>> Connected to ZeroMQ Bridge (Port 5555)</p>
+          <p>> Connected to WebSockets Broadcasting (Port 8765)</p>
+          <p>> Watchdog scanning <span class="text-indigo-400">/workspace/vault/Ingested_Sources/...</span></p>
+          <p>> Awaiting data streams...</p>
+          <div id="cmd-result" class="mt-2"></div>
+        </div>
+        
+        <form hx-post="/api/command" hx-target="#cmd-result" class="relative mt-auto shrink-0">
+          <input type="text" name="command" autocomplete="off" placeholder="Issue command to Hermes-Agent..." class="w-full bg-slate-900 border border-slate-800 rounded-xl py-3 px-4 text-xs text-white focus:outline-none focus:border-indigo-500/50">
+          <button type="submit" class="absolute right-2 top-2 p-1.5 text-slate-500 hover:text-white transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </button>
+        </form>
+      </section>
+
+      <!-- Obsidian Knowledge Base (Layer 3a) -->
+      <section class="col-span-5 row-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-5 overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Knowledge Ingestion</h3>
+          <span class="text-[10px] bg-indigo-500/20 text-indigo-400 px-2 rounded-full py-0.5">Watchdog Active</span>
+        </div>
+        <div class="space-y-2 flex-1 overflow-y-auto scrollbar-hide">
+          <div class="flex items-center gap-3 p-2 bg-slate-950 rounded-xl border border-slate-800">
+            <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[11px] text-white truncate">SMC_Theory_Cheat_Sheet.pdf</p>
+              <p class="text-[9px] text-slate-500 truncate">Chunked & Embedded in ChromaDB</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-2 bg-slate-950 rounded-xl border border-slate-800">
+            <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[11px] text-white truncate">Macro_Note_2024_03_24.md</p>
+              <p class="text-[9px] text-slate-500 truncate">Summarized by auxiliary llama-3.2</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</body>
+</html>

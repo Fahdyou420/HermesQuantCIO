@@ -1,0 +1,29 @@
+<div class="h-64 w-full flex items-end gap-1 mb-6">
+  <div class="w-full h-32 bg-indigo-500/10 border-t border-indigo-500/30 rounded-t"></div>
+  <div class="w-full h-40 bg-indigo-500/20 border-t border-indigo-500/40 rounded-t"></div>
+  <div class="w-full h-48 bg-indigo-500/10 border-t border-indigo-500/30 rounded-t"></div>
+  <div class="w-full h-36 bg-emerald-500/20 border-t border-emerald-500/40 rounded-t"></div>
+  <div class="w-full h-56 bg-indigo-500/20 border-t border-indigo-500/40 rounded-t"></div>
+  <div class="w-full h-44 bg-rose-500/20 border-t border-rose-500/40 rounded-t"></div>
+  <div class="w-full h-32 bg-indigo-500/10 border-t border-indigo-500/30 rounded-t"></div>
+  <div class="w-full h-48 bg-emerald-500/20 border-t border-emerald-500/40 rounded-t"></div>
+</div>
+
+<div class="grid grid-cols-4 gap-4">
+  <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Status</p>
+    <p class="text-lg font-mono {% if kill_switch %}text-red-400{% else %}text-emerald-400{% endif %}">{{ "HALTED" if kill_switch else status }}</p>
+  </div>
+  <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Active Trades</p>
+    <p class="text-lg font-mono text-white">{{ trades_active }}</p>
+  </div>
+  <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Win Rate</p>
+    <p class="text-lg font-mono text-amber-500">{{ win_rate }}</p>
+  </div>
+  <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Day P/L</p>
+    <p class="text-lg font-mono text-emerald-400">{{ daily_pnl }}</p>
+  </div>
+</div>

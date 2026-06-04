@@ -1,0 +1,9 @@
+{% if kill_switch %}
+<button hx-post="/api/killswitch" hx-vals='{"action": "deactivate"}' class="px-6 py-2.5 bg-rose-600 border border-rose-500 text-white rounded-xl font-bold text-sm tracking-wide uppercase shadow shadow-rose-500/50 hover:bg-rose-500 transition-all animate-pulse">
+  Kill-Switch: ACTIVE (HALTED)
+</button>
+{% else %}
+<button hx-post="/api/killswitch" hx-vals='{"action": "activate"}' class="px-6 py-2.5 bg-rose-600/10 border border-rose-500/50 text-rose-500 rounded-xl font-bold text-sm tracking-wide uppercase hover:bg-rose-600 hover:text-white transition-all">
+  Global Kill-Switch
+</button>
+{% endif %}

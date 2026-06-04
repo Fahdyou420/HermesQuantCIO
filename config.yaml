@@ -1,0 +1,21 @@
+agent:
+  name: "Hermes-Quant-CIO"
+  default_model: "ollama/hf.co/NousResearch/Hermes-3-Llama-3.1-8B-GGUF:latest"
+  provider: "ollama"
+  base_url: "http://host.docker.internal:11434"
+  auxiliary_model: "ollama/llama-3.2-3b:latest" # Handles background parsing summaries
+
+memory:
+  system: "persistent"
+  backend: "honcho"
+  vector_db: "fts5"
+  embedding_model: "ollama/nomic-embed-text:latest"
+
+approvals:
+  mode: "smart"
+  allow_list: ["cat", "ls", "grep", "python3"]
+
+sandbox:
+  backend: "docker"
+  image: "python:3.11-slim"
+  working_dir: "/workspace/vault"
